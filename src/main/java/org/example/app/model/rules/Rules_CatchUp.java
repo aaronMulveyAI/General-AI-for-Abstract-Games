@@ -71,46 +71,11 @@ public class Rules_CatchUp extends AbstractRules{
      * @param player the player to calculate the score
      * @param board the game board
      * @return the score of the player
-     */ // TODO: Make this method as generic as I can, extract from here
+     */
     @Override
     public double calculateScore(AbstractPlayer player, Board board) {
-        Color color = player.getColor();
-        board.update();
-        int maxGroupSize = 0;
-        for (Cell cell : board.getBoard()) {
-            if (cell.getColor().equals(color) && !cell.isVisited()) {
-                int groupSize = numberOfPiecesConnectedToCell(color, cell, board.getBoard());
-                maxGroupSize = Math.max(maxGroupSize, groupSize);
-                // Opción para resetear el estado visited aquí si es conveniente
-            }
-        }
-
-
-        board.update();
-
-        return maxGroupSize;
-    }
-
-    private int numberOfPiecesConnectedToCell(Color color, Cell startingCell, List<Cell> allCells) {
-        if (!startingCell.getColor().equals(color)) return 0;
-
-        int count = 1;
-        LinkedList<Cell> queue = new LinkedList<>();
-        startingCell.setVisited(true);
-        queue.add(startingCell);
-
-        while (!queue.isEmpty()) {
-            Cell current = queue.poll();
-            for (Cell neighbor : current.connectedCells) {
-                if (!neighbor.isVisited() && neighbor.getColor().equals(color)) { // Corrección aquí
-                    neighbor.setVisited(true);
-                    queue.add(neighbor);
-                    count++;
-                }
-            }
-        }
-
-        return count;
+        List<Integer> groupSizes = board.getGroups(player);
+        return groupSizes.stream().max(Integer::compareTo).orElse(0);
     }
 
 }

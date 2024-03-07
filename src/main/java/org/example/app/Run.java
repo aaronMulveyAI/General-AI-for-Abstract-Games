@@ -8,6 +8,8 @@ import org.example.app.model.GameModel;
 import org.example.app.model.board.Coordinates;
 import org.example.app.model.rules.RulesConstants;
 import org.example.app.model.rules.Rules_CatchUp;
+import org.example.app.model.rules.Rules_Odd;
+import org.example.app.model.rules.Rules_Omega;
 import org.example.app.view.GameView;
 
 import java.awt.*;
@@ -21,8 +23,10 @@ public class Run {
         Color player2Color = Color.RED;
         Color emptyColor = Color.WHITE;
         RulesConstants rulesConstants = new RulesConstants(gameName, boardSize, emptyColor, player1Color, player2Color);
-        Rules_CatchUp rules = new Rules_CatchUp(rulesConstants);
-        GameModel gameModel = new GameModel(rules);
+        Rules_CatchUp catchUp = new Rules_CatchUp(rulesConstants);
+        Rules_Omega omega = new Rules_Omega(rulesConstants);
+        Rules_Odd odd = new Rules_Odd(rulesConstants);
+        GameModel gameModel = new GameModel(odd);
         GameView gameView = new GameView(gameModel);
         AbstractPlayer[] players = new AbstractPlayer[2];
         GameController gameController = new GameController(gameModel, gameView);

@@ -1,5 +1,6 @@
 package org.example.app.model.board;
 
+import org.example.app.controller.players.AbstractPlayer;
 import org.example.app.model.rules.AbstractRules;
 
 import java.awt.*;
@@ -87,6 +88,62 @@ public class Board {
                 }
             }
         }
+    }
+
+    /**
+     * @param player the player to count groups size
+     * @return list with the size of the groups
+     */
+    public List<Integer> getGroups(AbstractPlayer player) {
+        Color color = player.getColor();
+        this.update();
+        List<Integer> clusterSizes = new ArrayList<>();
+
+        for (Cell cell : board) {
+            if (cell.getColor().equals(color) && !cell.isVisited()) {
+                int groupSize = numberOfPiecesConnectedToCell(color, cell);
+                clusterSizes.add(groupSize);
+            }
+        }
+        this.update();
+        return clusterSizes;
+    }
+
+    /**
+     * @param color the color to count the groups
+     * @param startingCell the starting cell
+     * @return list with the size of the groups
+     */
+    private int numberOfPiecesConnectedToCell(Color color, Cell startingCell) {
+        if (!startingCell.getColor().equals(color)) return 0;
+
+        int count = 1;
+        LinkedList<Cell> queue = new LinkedList<>();
+        startingCell.setVisited(true);
+        queue.add(startingCell);
+
+        while (!queue.isEmpty()) {
+            Cell current = queue.poll();
+            for (Cell neighbor : current.connectedCells) {
+                if (!neighbor.isVisited() && neighbor.getColor().equals(color)) {
+                    neighbor.setVisited(true);
+                    queue.add(neighbor);
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    public List<Cell> getCellsByColor(Color color) {
+        List<Cell> cellsByColor = new ArrayList<>();
+        for (Cell cell : this.board) {
+            if (cell.getColor().equals(color)) {
+                cellsByColor.add(cell);
+            }
+        }
+        return cellsByColor;
     }
 
     /**
