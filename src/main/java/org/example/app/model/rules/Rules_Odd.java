@@ -4,6 +4,7 @@ import org.example.app.controller.players.AbstractPlayer;
 import org.example.app.model.board.Board;
 import org.example.app.model.board.Cell;
 
+
 import java.util.List;
 
 public class Rules_Odd extends AbstractRules{
@@ -15,6 +16,7 @@ public class Rules_Odd extends AbstractRules{
     public List<Cell> getEmptyCells(Board board) {
         return board.getCellsByColor(this.getEmptyColor());
     }
+
 
     @Override
     public boolean isGameOver(Board board) {

@@ -4,6 +4,8 @@ import org.example.app.controller.GameController;
 import org.example.app.model.board.Cell;
 import org.example.app.view.GameView;
 
+import java.awt.*;
+
 public class PlayerHuman extends AbstractPlayer{
     private final Object lock = new Object();
     private volatile Cell selectedCell;
@@ -36,6 +38,7 @@ public class PlayerHuman extends AbstractPlayer{
                 }
             }
             Cell cell = selectedCell;
+
             selectedCell = null;
             return cell;
         }

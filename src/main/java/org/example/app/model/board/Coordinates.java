@@ -2,7 +2,7 @@ package org.example.app.model.board;
 
 import static java.lang.Math.sqrt;
 
-public class Coordinates {
+public class Coordinates implements Cloneable{
 
     public int[] QRS;
     public double[] XY;
@@ -18,4 +18,5 @@ public class Coordinates {
         XY[1] = (3.0 / 2.0 * QRS[1]);
         return XY;
     }
+
 }

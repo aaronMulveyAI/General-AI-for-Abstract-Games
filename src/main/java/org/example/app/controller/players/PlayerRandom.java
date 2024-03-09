@@ -4,6 +4,7 @@ import org.example.app.controller.GameController;
 import org.example.app.model.GameModel;
 import org.example.app.model.board.Cell;
 
+import java.util.List;
 import java.util.Random;
 
 public class PlayerRandom extends AbstractPlayer{

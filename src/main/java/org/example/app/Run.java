@@ -3,9 +3,9 @@ package org.example.app;
 import org.example.app.controller.GameController;
 import org.example.app.controller.players.AbstractPlayer;
 import org.example.app.controller.players.PlayerHuman;
+import org.example.app.controller.players.PlayerMCTS;
 import org.example.app.controller.players.PlayerRandom;
 import org.example.app.model.GameModel;
-import org.example.app.model.board.Coordinates;
 import org.example.app.model.rules.RulesConstants;
 import org.example.app.model.rules.Rules_CatchUp;
 import org.example.app.model.rules.Rules_Odd;
@@ -26,12 +26,12 @@ public class Run {
         Rules_CatchUp catchUp = new Rules_CatchUp(rulesConstants);
         Rules_Omega omega = new Rules_Omega(rulesConstants);
         Rules_Odd odd = new Rules_Odd(rulesConstants);
-        GameModel gameModel = new GameModel(odd);
+        GameModel gameModel = new GameModel(omega);
         GameView gameView = new GameView(gameModel);
         AbstractPlayer[] players = new AbstractPlayer[2];
         GameController gameController = new GameController(gameModel, gameView);
         players[1] = new PlayerHuman(gameController);
-        players[0] = new PlayerRandom(gameController);
+        players[0] = new PlayerMCTS(gameController);
         gameController.setPlayers(players);
         gameController.startGame();
     }

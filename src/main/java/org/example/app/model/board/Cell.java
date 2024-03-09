@@ -9,7 +9,7 @@ import java.util.List;
  * It has a unique identifier (QRS) and a color.
  * The board class will set the color and connect the cells.
  */
-public class Cell {
+public class Cell implements Cloneable{
 
     private Coordinates coordinates;
     private final int[] QRS;             /* Unique identifier for the cell (The coordinate system) */
@@ -63,5 +63,26 @@ public class Cell {
 
     public Coordinates getCoordinates() {
         return coordinates;
+    }
+
+    @Override
+    public Cell clone() {
+        try {
+            Cell clonedCell = (Cell) super.clone();
+            // Dado que Color es inmutable en Java, no es necesario clonarlo.
+            // Sin embargo, la lista de celdas conectadas sí necesita ser clonada, pero solo sus referencias, ya que la estructura de conexión se maneja externamente.
+            clonedCell.connectedCells = new ArrayList<>(this.connectedCells);
+            // Las coordenadas también deben ser clonadas si son mutables.
+            clonedCell.coordinates = new Coordinates(this.QRS.clone()); // Asumiendo que Coordinates tiene un constructor adecuado.
+            // El campo 'visited' es un primitivo, por lo que se copia directamente.
+            return clonedCell;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("Cell cannot be cloned", e);
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return QRS[0] == ((Cell)obj).QRS[0] && QRS[1] == ((Cell)obj).QRS[1] && QRS[2] == ((Cell)obj).QRS[2];
     }
 }

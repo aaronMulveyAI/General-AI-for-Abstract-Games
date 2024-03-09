@@ -2,7 +2,6 @@ package org.example.app.model;
 
 import org.example.app.model.board.*;
 import org.example.app.model.rules.AbstractRules;
-import org.example.app.view.GameView;
 import org.example.app.controller.players.AbstractPlayer;
 
 
@@ -12,12 +11,13 @@ import java.util.List;
 /**
  * This class is the model of the game, it contains the board and the grid
  */
-public class GameModel {
+public class GameModel implements Cloneable {
+
 
     /**
      * The game board
      */
-    private final Board BOARD;
+    private Board BOARD;
 
     /**
      * The game rules
@@ -33,19 +33,18 @@ public class GameModel {
         this.RULES = rules;
     }
 
-
     /**
      * @return the current player
      */
     public AbstractPlayer getCurrentPlayer(AbstractPlayer[] players) {
-        return RULES.updateCurrentPlayer(players, BOARD);
+        return BOARD.updateCurrentPlayer(players, BOARD);
     }
 
     /**
      * @return a list of empty cells in the board
      */
     public List<Cell> getEmptyCells() {
-        return this.BOARD.getEmptyCells();
+        return BOARD.getEmptyCells();
     }
 
     /**
@@ -70,4 +69,18 @@ public class GameModel {
     public AbstractRules getRULES() {
         return RULES;
     }
+
+    @Override
+    public GameModel clone() {
+        try {
+            GameModel cloned = (GameModel) super.clone();
+            // Realizar copias profundas de los objetos mutables para asegurar la clonación completa.
+            cloned.BOARD = this.BOARD.clone(); // Asume que Board también es Cloneable y tiene un método clone() adecuado.
+            // Si tienes otros objetos mutables como parte del estado del juego, asegúrate de clonarlos aquí.
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); // No debería ocurrir, maneja adecuadamente según tu caso.
+        }
+    }
+
 }

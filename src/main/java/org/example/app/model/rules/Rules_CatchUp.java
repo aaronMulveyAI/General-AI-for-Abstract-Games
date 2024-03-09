@@ -3,10 +3,7 @@ package org.example.app.model.rules;
 import org.example.app.model.board.Board;
 import org.example.app.model.board.Cell;
 import org.example.app.controller.players.AbstractPlayer;
-
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**

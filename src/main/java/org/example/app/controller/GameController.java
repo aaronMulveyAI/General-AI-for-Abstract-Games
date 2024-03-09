@@ -6,6 +6,8 @@ import org.example.app.model.board.Cell;
 import org.example.app.view.GameView;
 import org.example.app.controller.players.AbstractPlayer;
 
+import java.awt.*;
+
 
 public class GameController {
     private final GameView GAME_VIEW;
@@ -24,14 +26,19 @@ public class GameController {
      * Start the game
      */
     public void startGame() {
+
+        AbstractPlayer currentPlayer = GAME_MODEL.getCurrentPlayer(players);
+        AbstractPlayer otherPlayer = currentPlayer.equals(players[0]) ? players[1] : players[0];
+
         while (!GAME_MODEL.isGameOver()) {
-            AbstractPlayer currentPlayer = GAME_MODEL.getCurrentPlayer(players);
-            AbstractPlayer otherPlayer = currentPlayer.equals(players[0]) ? players[1] : players[0];
             Cell cell = currentPlayer.makeMove();
             GAME_MODEL.makeMove(cell, currentPlayer.getColor());
             currentPlayer.updatePlayer();
+            otherPlayer.updatePlayer();
             GAME_VIEW.updateScores(currentPlayer.getScore(), otherPlayer.getScore());
             GAME_VIEW.update();
+            currentPlayer = GAME_MODEL.getCurrentPlayer(players);
+            otherPlayer = currentPlayer.equals(players[0]) ? players[1] : players[0];
         }
     }
 
@@ -47,5 +54,9 @@ public class GameController {
      */
     public GameView getGameView() {
         return GAME_VIEW;
+    }
+
+    public AbstractPlayer[] getPlayers() {
+        return players;
     }
 }

@@ -3,6 +3,7 @@ package org.example.app.model.rules;
 import org.example.app.model.board.*;
 import org.example.app.controller.players.AbstractPlayer;
 
+
 import java.awt.*;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public abstract class AbstractRules {
      * @return the empty cells of the given board.
      */
     public abstract List<Cell> getEmptyCells(Board board);
+
 
     /** The implementation of this method should return the game status
      *  and this method has to be pass by reference the board

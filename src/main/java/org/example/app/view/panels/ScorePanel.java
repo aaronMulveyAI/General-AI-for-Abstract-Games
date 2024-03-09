@@ -21,7 +21,7 @@ public class ScorePanel extends JPanel {
     }
 
     public void updateScore(double score1, double score2) {
-        player1Score.setText(": " + score1);
-        player2Score.setText(": " + score2);
+        player1Score.setText("Jugador 1: " + score1);
+        player2Score.setText("Jugador 2: " + score2);
     }
 }

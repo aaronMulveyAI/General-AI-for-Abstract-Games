@@ -13,7 +13,7 @@ import static java.lang.Math.min;
 /**
  * The board class
  */
-public class Board {
+public class Board implements Cloneable {
     private List<Cell> board;
     private final AbstractRules RULES;
     public Board(AbstractRules rules) {
@@ -30,12 +30,14 @@ public class Board {
         board.get(board.indexOf(cell)).setColor(color);
     }
 
+
     /**
      * @return the empty cells
      */
     public List<Cell> getEmptyCells() {
         return RULES.getEmptyCells(this);
     }
+
 
     /**
      * @return the game status
@@ -95,7 +97,8 @@ public class Board {
      * @return list with the size of the groups
      */
     public List<Integer> getGroups(AbstractPlayer player) {
-        Color color = player.getColor();
+        int boardSize = player.getPlayerNumber();
+        Color color = player.getPlayerNumber() == 1 ? RULES.getFirstPlayerColor() : RULES.getSecondPlayerColor();
         this.update();
         List<Integer> clusterSizes = new ArrayList<>();
 
@@ -146,12 +149,33 @@ public class Board {
         return cellsByColor;
     }
 
+    public AbstractPlayer updateCurrentPlayer(AbstractPlayer[] players, Board board) {
+        return RULES.updateCurrentPlayer(players, this);
+    }
     /**
      * updates the cells to non visited
      */
     public void update(){
         for (Cell cell : board) {
             cell.setVisited(false);
+        }
+    }
+
+    @Override
+    public Board clone() {
+        try {
+            Board clonedBoard = (Board) super.clone();
+            // Clonar la lista de celdas
+            clonedBoard.board = new ArrayList<>();
+            for (Cell cell : this.board) {
+                clonedBoard.board.add(cell.clone()); // Asegúrate de que Cell implemente Cloneable y sobrescriba clone()
+            }
+            // No es necesario clonar RULES si es inmutable o no cambia el estado entre clones
+            // Si conectas las celdas después de clonarlas, puedes llamar a connectCells aquí, o asegurarte de que las conexiones se clonan también.
+            // clonedBoard.connectCells();
+            return clonedBoard;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("Cloning not supported", e);
         }
     }
 }
