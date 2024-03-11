@@ -19,5 +19,9 @@ public class Action {
         return cell;
     }
 
+    public List<Color> getColor() {
+        return color;
+    }
+
 
 }

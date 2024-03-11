@@ -22,5 +22,10 @@ public class Stats {
         return score;
     }
 
+    public double getVariance() {
+        final double P = score / visits;
+        return P * (1 - P);
+    }
+
 
 }

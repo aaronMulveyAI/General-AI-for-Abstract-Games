@@ -13,7 +13,10 @@ public class PlayerMCTS extends AbstractPlayer {
 
     @Override
     public Cell makeMove() {
-        State state = new State(gameController.getGameModel(), gameController.getPlayers(), null);
+        AbstractPlayer[] players = gameController.getPlayers();
+        AbstractPlayer[] clonePlayers ={players[0].clone(), players[1].clone()};
+
+        State state = new State(gameController.getGameModel(), clonePlayers, null);
         MCTS mcts = new MCTS();
         Action action = mcts.search(state);
         return action.getCell().get(0);

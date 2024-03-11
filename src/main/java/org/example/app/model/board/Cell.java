@@ -67,18 +67,10 @@ public class Cell implements Cloneable{
 
     @Override
     public Cell clone() {
-        try {
-            Cell clonedCell = (Cell) super.clone();
-            // Dado que Color es inmutable en Java, no es necesario clonarlo.
-            // Sin embargo, la lista de celdas conectadas sí necesita ser clonada, pero solo sus referencias, ya que la estructura de conexión se maneja externamente.
-            clonedCell.connectedCells = new ArrayList<>(this.connectedCells);
-            // Las coordenadas también deben ser clonadas si son mutables.
-            clonedCell.coordinates = new Coordinates(this.QRS.clone()); // Asumiendo que Coordinates tiene un constructor adecuado.
-            // El campo 'visited' es un primitivo, por lo que se copia directamente.
-            return clonedCell;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError("Cell cannot be cloned", e);
-        }
+        Cell cell = new Cell(this.coordinates.QRS); // Clonamos las coordenadas si son in
+        cell.color = this.color;
+        cell.visited = this.visited;
+        return cell;
     }
 
     @Override

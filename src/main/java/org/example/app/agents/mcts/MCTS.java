@@ -2,33 +2,38 @@ package org.example.app.agents.mcts;
 
 import org.example.app.agents.decision.Action;
 import org.example.app.agents.decision.State;
+import org.example.app.controller.players.AbstractPlayer;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class MCTS {
-    static final int ITERATIONS = 100;
+    static final int ITERATIONS = 10000;
     static final double C = 1.4;
     Node root;
 
     public Action search(State state){
-        Node root = new Node(null, state);
+        long start = System.currentTimeMillis();
+        root = new Node(null, state);
 
         for (int i = 0; i < ITERATIONS; i++) {
             Node node = select(root);
-            assert node != null;
-            if(!node.state.isTerminal()){
-                expand(node);
+
+            if(!node.state.isTerminal()){ // si no es terminal
+                expand(node); // expande el nodo
             }
-            Node newNode = node.isLeaf() ? node : select(node);
-            double value = simulate(newNode);
-            backpropagation(newNode, value);
+            Node newNode = node.isLeaf() ? node : select(node); // si es terminal devuelve el node
+            double value = simulate(newNode); // simula y obtén el valor
+            backpropagation(newNode, value); // propaga el valor a todos los nodos
         }
+
 
         Node best = root.children.stream()
                 .max(Comparator.comparingDouble(n -> uctValue(n, C)))
-                .orElseThrow(IllegalStateException::new);
+                .orElse(root.children.get(0));
 
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
         return best.state.action;
     }
 
@@ -44,22 +49,26 @@ public class MCTS {
         return current;
     }
 
-    private void expand(Node node){
-        node.state.getPosibleStates().forEach(state -> {
-            Node child = new Node(node, state);
-            node.addChild(child);
-        });
+    private void expand(Node node) {
+
+        node.state.getRandomPosibleStates(5)
+                .forEach(state -> {
+                    Node child = new Node(node, state);
+                    node.addChild(child);
+                });
     }
+
     private double simulate(Node node){
         State tempState = node.state;
         while (!tempState.isTerminal()){
-            List<State> states = tempState.getPosibleStates();
-            tempState = tempState.getPosibleStates().get((int) (Math.random() * states.size()));
+            tempState = tempState.getRandomPosibleStates(1).get(0);
         }
-        return 0;
+
+        return tempState.getReward();
     }
     private void backpropagation(Node node, double value){
         Node tempNode = node;
+        State tempState = node.state;
         while (tempNode != null) {
             tempNode.state.stats.update(value);
             tempNode = tempNode.parent;
@@ -67,9 +76,19 @@ public class MCTS {
     }
 
     private double uctValue(Node node, double c) {
+        if (node.parent == null) return 0; // Añadido como precaución para el nodo raíz.
+
         int n = node.state.stats.getVisits();
         double q = node.state.stats.getScore();
         int N = node.parent.state.stats.getVisits();
-        return n == 0 ? Integer.MAX_VALUE : (q / n) + c * Math.sqrt((Math.log(N)) / n);
+
+        if (n == 0) return Integer.MAX_VALUE;
+
+        double avgReward = q / n;
+        double variance = node.state.stats.getVariance() + Math.sqrt((2 * Math.log(N)) / n); // Asume que tienes un método para calcular la varianza.
+        double minVariance = Math.min(0.25, variance); // Limita la varianza para asegurar la estabilidad numérica.
+
+        return avgReward + c * Math.sqrt(Math.log(N) * minVariance / n);
     }
+
 }

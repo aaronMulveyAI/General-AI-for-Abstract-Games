@@ -6,7 +6,6 @@ import org.example.app.model.board.Cell;
 import org.example.app.view.GameView;
 import org.example.app.controller.players.AbstractPlayer;
 
-import java.awt.*;
 
 
 public class GameController {
@@ -32,13 +31,16 @@ public class GameController {
 
         while (!GAME_MODEL.isGameOver()) {
             Cell cell = currentPlayer.makeMove();
+            currentPlayer.updatePlayer();
+            otherPlayer.updatePlayer();
             GAME_MODEL.makeMove(cell, currentPlayer.getColor());
             currentPlayer.updatePlayer();
             otherPlayer.updatePlayer();
-            GAME_VIEW.updateScores(currentPlayer.getScore(), otherPlayer.getScore());
+            GAME_VIEW.updateScores(players[0].getScore(), players[1].getScore());
             GAME_VIEW.update();
             currentPlayer = GAME_MODEL.getCurrentPlayer(players);
             otherPlayer = currentPlayer.equals(players[0]) ? players[1] : players[0];
+
         }
     }
 

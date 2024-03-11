@@ -27,7 +27,16 @@ public class Board implements Cloneable {
      * @param color the color to set the cell
      */
     public void makeMove(Cell cell, Color color) {
-        board.get(board.indexOf(cell)).setColor(color);
+        for (Cell c : board) {
+            for (Cell cNeighbour : c.connectedCells) {
+                if(cNeighbour.equals(cell)) {
+                    cNeighbour.setColor(color);
+                }
+            }
+            if(c.equals(cell)) {
+                c.setColor(color);
+            }
+        }
     }
 
 
@@ -83,9 +92,10 @@ public class Board implements Cloneable {
                     int difference_R = Math.abs(cell_A.getQRS()[1] - cell_B.getQRS()[1]);
                     int difference_S = Math.abs(cell_A.getQRS()[2] - cell_B.getQRS()[2]);
                     int total_difference = difference_Q + difference_R + difference_S;
+
                     if (total_difference == 2) { // they are neighbors
-                        cell_A.connectedCells.add(cell_B);
-                        cell_B.connectedCells.add(cell_A);
+                        if (!cell_A.connectedCells.contains(cell_B)) cell_A.connectedCells.add(cell_B);
+                        if (!cell_B.connectedCells.contains(cell_A)) cell_B.connectedCells.add(cell_A);
                     }
                 }
             }
@@ -97,13 +107,14 @@ public class Board implements Cloneable {
      * @return list with the size of the groups
      */
     public List<Integer> getGroups(AbstractPlayer player) {
-        int boardSize = player.getPlayerNumber();
-        Color color = player.getPlayerNumber() == 1 ? RULES.getFirstPlayerColor() : RULES.getSecondPlayerColor();
+
+        Color color = player.getPlayerNumber() == 0 ? RULES.getFirstPlayerColor() : RULES.getSecondPlayerColor();
         this.update();
         List<Integer> clusterSizes = new ArrayList<>();
 
         for (Cell cell : board) {
-            if (cell.getColor().equals(color) && !cell.isVisited()) {
+            Color cellColor = cell.getColor();
+            if (cellColor.equals(color) && !cell.isVisited()) {
                 int groupSize = numberOfPiecesConnectedToCell(color, cell);
                 clusterSizes.add(groupSize);
             }
@@ -150,7 +161,7 @@ public class Board implements Cloneable {
     }
 
     public AbstractPlayer updateCurrentPlayer(AbstractPlayer[] players, Board board) {
-        return RULES.updateCurrentPlayer(players, this);
+        return RULES.updateCurrentPlayer(players, board);
     }
     /**
      * updates the cells to non visited
@@ -165,17 +176,33 @@ public class Board implements Cloneable {
     public Board clone() {
         try {
             Board clonedBoard = (Board) super.clone();
-            // Clonar la lista de celdas
             clonedBoard.board = new ArrayList<>();
             for (Cell cell : this.board) {
-                clonedBoard.board.add(cell.clone()); // Asegúrate de que Cell implemente Cloneable y sobrescriba clone()
+                Cell cloned = cell.clone();
+                for (Cell cellNeighbour : cell.connectedCells) {
+                    cloned.connectedCells.add(cellNeighbour.clone());
+                }
+                clonedBoard.board.add(cloned);
             }
-            // No es necesario clonar RULES si es inmutable o no cambia el estado entre clones
-            // Si conectas las celdas después de clonarlas, puedes llamar a connectCells aquí, o asegurarte de que las conexiones se clonan también.
-            // clonedBoard.connectCells();
+
+            //clonedBoard.reconnectCells();
+
             return clonedBoard;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError("Cloning not supported", e);
         }
     }
+
+    // Método auxiliar para reconectar las celdas clonadas basado en la estructura original
+    private void reconnectCells() {
+        for (int i = 0; i < this.board.size(); i++) {
+            Cell cellA = this.board.get(i);
+            for (Cell cellB : this.board) {
+                if (!cellA.equals(cellB) && cellA.connectedCells.contains(cellB)) { // areNeighbors es un método hipotético que determina si dos celdas deben estar conectadas
+                    cellA.connectedCells.add(cellB);
+                }
+            }
+        }
+    }
+
 }

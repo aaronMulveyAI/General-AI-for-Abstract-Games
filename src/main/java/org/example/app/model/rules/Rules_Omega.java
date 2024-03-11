@@ -26,18 +26,28 @@ public class Rules_Omega extends AbstractRules{
 
     @Override
     public AbstractPlayer updateCurrentPlayer(AbstractPlayer[] players, Board board) {
-        int colorIndex =  (board.getEmptyCells().size() + 1) % (players.length * 2);
-        int playerIndex = (board.getEmptyCells().size() + 1) % (players.length * 2);
+        // Obtener el tamaño total del tablero.
+        int size = board.getBoard().size();
+        // Calcular las casillas llenas restando las vacías del total.
+        int filledCells = size - board.getEmptyCells().size();
+        // players.length * 2 porque cada jugador pone dos colores en su turno.
+        int totalSteps = players.length * 2;
+        // Calculamos el índice del paso basado en las casillas llenas para mantener el orden de juego.
+        int stepIndex = filledCells % totalSteps;
+
+        // Calculamos el índice del jugador: es 0 para los dos primeros pasos, 1 para los siguientes dos, etc.
+        int playerIndex = stepIndex / 2;
+        // Los colores se alternan cada paso, por lo que usamos stepIndex para determinar el color actual.
         Color[] colors = {
-                this.getFirstPlayerColor(),
-                this.getSecondPlayerColor(),
-                this.getFirstPlayerColor(),
-                this.getSecondPlayerColor()};
+                this.getFirstPlayerColor(), // j1 color1
+                this.getSecondPlayerColor(), // j1 color2
+                this.getFirstPlayerColor(), // j2 color1
+                this.getSecondPlayerColor()}; // j2 color2
 
-        int[] indices = {0, 1, 1, 0};
-
-        players[indices[playerIndex]].setColor(colors[colorIndex]);
-        return  players[indices[playerIndex]];
+        // Asignamos el color al jugador actual basado en el índice calculado.
+        players[playerIndex].setColor(colors[stepIndex]);
+        // Devolvemos el jugador actual con su color asignado.
+        return players[playerIndex];
     }
 
     @Override

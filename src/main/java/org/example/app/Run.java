@@ -18,7 +18,7 @@ public class Run {
 
     public static void main(String[] args) {
         String gameName = "CatchUp";
-        int boardSize = 5;
+        int boardSize = 3;
         Color player1Color = Color.BLUE;
         Color player2Color = Color.RED;
         Color emptyColor = Color.WHITE;
@@ -30,8 +30,8 @@ public class Run {
         GameView gameView = new GameView(gameModel);
         AbstractPlayer[] players = new AbstractPlayer[2];
         GameController gameController = new GameController(gameModel, gameView);
-        players[1] = new PlayerHuman(gameController);
-        players[0] = new PlayerMCTS(gameController);
+        players[0] = new PlayerRandom(gameController);
+        players[1] = new PlayerMCTS(gameController);
         gameController.setPlayers(players);
         gameController.startGame();
     }

@@ -6,10 +6,9 @@ import org.example.app.model.rules.AbstractRules;
 
 import java.awt.*;
 
-public abstract class AbstractPlayer {
+public abstract class AbstractPlayer implements Cloneable {
     private double score;
     private Color color;
-
     private final int PLAYER_NUMBER;
     private static int numberOfPlayers = 0;
     protected GameController gameController;
@@ -55,4 +54,17 @@ public abstract class AbstractPlayer {
         return PLAYER_NUMBER;
     }
 
+    @Override
+    public AbstractPlayer clone() {
+        try {
+            AbstractPlayer cloned = (AbstractPlayer) super.clone();
+            // For immutable and primitive fields, the default cloning is fine.
+            // If there were mutable objects that needed deep cloning, you would clone them here.
+            // Note: GameController, if mutable, might need special handling.
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            // This shouldn't happen since we're Cloneable
+            throw new AssertionError(e);
+        }
+    }
 }
